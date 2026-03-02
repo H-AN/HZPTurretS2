@@ -84,7 +84,7 @@ public class HanTurretS2Service
             return null;
         }
 
-        int Price = turret.Price;
+        int Price = turret.Price; 
         var Ims = Controller.InGameMoneyServices;
         if (Ims != null && Ims.IsValid && Price > 0)
         {
