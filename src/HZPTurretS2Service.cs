@@ -114,7 +114,6 @@ public class HanTurretS2Service
         Physics.SetModel(phyModel);
         Physics.Collision.CollisionGroup = (byte)CollisionGroup.Dissolving;
         Physics.Collision.CollisionGroupUpdated();
-
         Physics.DispatchSpawn();
 
         var turretHandle = _core.EntitySystem.GetRefEHandle(Physics);
@@ -126,11 +125,12 @@ public class HanTurretS2Service
         string propName = $"华仔炮塔_{Random.Shared.Next(1000000, 9999999)}";
         Physics!.Entity!.Name = propName;
 
-
         var turretData = new Turrets
         {
             Name = turret.Name,
             Model = turret.Model,
+            Health = turret.Health,
+            Canbreakage = turret.Canbreakage,
             Range = turret.Range,
             Rate = turret.Rate,
             Damage = turret.Damage,
@@ -150,16 +150,31 @@ public class HanTurretS2Service
         _globals.TurretData[turretHandle.Raw] = turretData;
         turretSet.Add(turretHandle.Raw);
 
+        _core.Scheduler.NextTick(() =>
+        {
+            if (Physics == null || !Physics.IsValid || !Physics.IsValidEntity)
+                return;
+
+            Physics.MaxHealth = turretData.Health;
+            Physics.MaxHealthUpdated();
+
+            Physics.Health = turretData.Health;
+            Physics.HealthUpdated();
+        });
+
         var Base = CreateSentryBase(player, turretHandle, propName, turretData.GlowColor, Pos);
         var Sentry = CreateSentry(player, turretHandle, propName, turretData, Pos);
 
+        var phyHandle = _core.EntitySystem.GetRefEHandle(Physics);
         var baseHandle = _core.EntitySystem.GetRefEHandle(Base);
         var headHandle = _core.EntitySystem.GetRefEHandle(Sentry);
 
-        if (baseHandle.IsValid && headHandle.IsValid)
+        if (phyHandle.IsValid && baseHandle.IsValid && headHandle.IsValid)
         {
-            _globals.SentryBaseMap[headHandle.Raw] = baseHandle.Raw;
+            _globals.TurretPartsMap[phyHandle.Raw] = (headHandle.Raw, baseHandle.Raw);
         }
+
+        _globals.TurretHeadToPhysics[headHandle.Raw] = phyHandle.Raw;
 
         return Physics;
     }
@@ -245,7 +260,7 @@ public class HanTurretS2Service
             set = new HashSet<uint>();
             _globals.TurretOwner[player.PlayerID] = set;
         }
-        set.Add(SentryHandle.Raw);
+        set.Add(turretHandle.Raw);
 
         string BaseName = propName + "_Sentry";
         Sentryent!.Entity!.Name = BaseName;
@@ -270,32 +285,6 @@ public class HanTurretS2Service
         return Sentry;
     }
 
-
-    /*
-    public void RemoveTurretFromCount(IPlayer player, CPhysicsPropOverride entIndex, string turretName)
-    {
-        var entRef = _core.EntitySystem.GetRefEHandle(entIndex);
-        if (!entRef.IsValid)
-            return;
-
-        var RefIndex = entRef.EntityIndex;
-
-        var SteamId = player.SteamID;
-        if (SteamId == 0)
-            return;
-
-        if (_globals.PlayerTurretCounts.TryGetValue(SteamId, out var turretDict))
-        {
-            if (turretDict.TryGetValue(turretName, out var set))
-            {
-                set.Remove(RefIndex);
-
-                if (set.Count == 0)
-                    turretDict.Remove(turretName);
-            }
-        }
-    }
-    */
 
     public Turret? GetTurretConfigByName(string name, ILogger? logger = null)
     {

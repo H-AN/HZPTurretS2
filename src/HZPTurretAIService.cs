@@ -63,9 +63,13 @@ public class HanTurretAIService
             bool ownerIsZombie = _zpAPI.HZP_IsZombie(Owner.PlayerID);
             if (ownerIsZombie)
             {
-                KillTurret(SentryHandle);
+                if (_globals.TurretHeadToPhysics.TryGetValue(SentryHandle.Raw, out var phyRaw))
+                {
+                    var phyHandle = new CHandle<CPhysicsPropOverride>(phyRaw);
+                    KillTurret(phyHandle);
+                }
             }
-     
+
             var allPlayers = _core.PlayerManager.GetAllPlayers();
             float range = Range;
             float fireRange = Range - 200f;
@@ -173,20 +177,58 @@ public class HanTurretAIService
         _core.Scheduler.StopOnMapChange(_globals.SentryThink[SentryHandle.Raw]);
     }
 
-    public void RemoveAllPlayerTurrets(int playerID)
+    public void RemoveAllPlayerTurrets(int playerID, ulong steamID)
     {
-        if (!_globals.TurretOwner.TryGetValue(playerID, out var set))
-            return;
-
-        foreach (var headRaw in set.ToList())
+        if (_globals.TurretOwner.TryGetValue(playerID, out var set))
         {
-            var headHandle = new CHandle<CBaseModelEntity>(headRaw);
-            KillTurret(headHandle);
+            foreach (var phyRaw in set.ToList())
+            {
+                var phyHandle = new CHandle<CPhysicsPropOverride>(phyRaw);
+                KillTurret(phyHandle);
+            }
+
+            set.Clear();
+            _globals.TurretOwner.Remove(playerID);
         }
 
-        set.Clear();
-        _globals.TurretOwner.Remove(playerID);
+        _globals.PlayerTurretCounts.Remove(steamID);
     }
+
+    public void KillTurret(CHandle<CPhysicsPropOverride> phyHandle)
+    {
+        if (!phyHandle.IsValid)
+            return;
+
+        uint phyRaw = phyHandle.Raw;
+
+        if (!_globals.TurretPartsMap.TryGetValue(phyRaw, out var parts))
+            return;
+
+        var headHandle = new CHandle<CBaseModelEntity>(parts.head);
+        var baseHandle = new CHandle<CBaseModelEntity>(parts.baseEnt);
+
+        if (_globals.SentryThink.TryGetValue(parts.head, out var task))
+        {
+            task?.Cancel();
+            _globals.SentryThink.Remove(parts.head);
+        }
+
+        _core.Scheduler.NextTick(() =>
+        {
+            if (headHandle.IsValid)
+                headHandle.Value?.AcceptInput("Kill", 0);
+
+            if (baseHandle.IsValid)
+                baseHandle.Value?.AcceptInput("Kill", 0);
+
+            if (phyHandle.IsValid)
+                phyHandle.Value?.AcceptInput("Kill", 0);
+        });
+
+        _globals.TurretPartsMap.Remove(phyRaw);
+    }
+
+    /*
     public void KillTurret(CHandle<CBaseModelEntity> sentryHandle)
     {
         if (!sentryHandle.IsValid)
@@ -225,4 +267,5 @@ public class HanTurretAIService
             }
         });
     }
+    */
 }

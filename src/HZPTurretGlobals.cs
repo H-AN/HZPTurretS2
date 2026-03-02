@@ -9,6 +9,8 @@ namespace HZPTurretS2;
 
 public class HanTurretGlobals
 {
+    public Dictionary<int, ulong> PlayerSteamCache = new();
+
     public Dictionary<uint, Turrets> TurretData = new();
 
     public Dictionary<uint, CancellationTokenSource> SentryThink = new Dictionary<uint, CancellationTokenSource>();
@@ -21,7 +23,10 @@ public class HanTurretGlobals
 
     public Dictionary<int, HashSet<uint>> TurretOwner = new();
 
-    public Dictionary<uint, uint> SentryBaseMap = new();
+    public Dictionary<uint, (uint head, uint baseEnt)> TurretPartsMap = new();
+
+    public Dictionary<uint, uint> TurretHeadToPhysics = new();
+    //public Dictionary<uint, uint> SentryBaseMap = new();
     public bool TurretCanFire { get; set; }
     public class SentryParticles
     {
@@ -32,6 +37,8 @@ public class HanTurretGlobals
     {
         public string Name { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;
+        public int Health { get; set; } = 0;
+        public bool Canbreakage { get; set; } = true;
         public float Range { get; set; } = 0f;
         public float Rate { get; set; } = 0f;
         public float Damage { get; set; } = 0f;
