@@ -4,10 +4,10 @@ using SwiftlyS2.Shared;
 using SwiftlyS2.Shared.Natives;
 using SwiftlyS2.Shared.Players;
 using SwiftlyS2.Shared.SchemaDefinitions;
-using static HanTurretS2.HanTurretGlobals;
-using static HanTurretS2.HanTurretS2Config;
+using static HZPTurretS2.HanTurretGlobals;
+using static HZPTurretS2.HanTurretS2Config;
 
-namespace HanTurretS2;
+namespace HZPTurretS2;
 
 public class HanTurretS2Service
 {

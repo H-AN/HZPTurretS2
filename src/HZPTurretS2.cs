@@ -8,14 +8,14 @@ using Microsoft.Extensions.Logging;
 
 
 
-namespace HanTurretS2;
+namespace HZPTurretS2;
 
 [PluginMetadata(
-    Id = "HanTurretS2",
+    Id = "HZPTurretS2",
     Version = "1.0.1",
-    Name = "H-AN 炮塔 for Sw2/H-AN Turret for Sw2",
+    Name = "H-AN ZP炮塔/H-AN ZPTurret",
     Author = "H-AN",
-    Description = "CS2 炮塔/CS2 Turret")]
+    Description = "CS2 ZP炮塔/CS2 ZPTurret")]
 
 public partial class HanTurretS2(ISwiftlyCore core) : BasePlugin(core)
 {

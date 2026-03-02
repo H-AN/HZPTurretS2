@@ -7,7 +7,7 @@ using SwiftlyS2.Shared;
 using SwiftlyS2.Shared.Commands;
 using SwiftlyS2.Shared.Players;
 
-namespace HanTurretS2;
+namespace HZPTurretS2;
 
 public class HanTurretCommands
 {

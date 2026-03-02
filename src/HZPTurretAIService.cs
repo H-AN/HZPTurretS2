@@ -5,7 +5,7 @@ using SwiftlyS2.Shared.Natives;
 using SwiftlyS2.Shared.Players;
 using SwiftlyS2.Shared.SchemaDefinitions;
 
-namespace HanTurretS2;
+namespace HZPTurretS2;
 
 public class HanTurretAIService
 {

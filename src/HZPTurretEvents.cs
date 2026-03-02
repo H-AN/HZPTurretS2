@@ -11,7 +11,7 @@ using SwiftlyS2.Shared.Players;
 using SwiftlyS2.Shared.SchemaDefinitions;
 using SwiftlyS2.Shared.Sounds;
 
-namespace HanTurretS2;
+namespace HZPTurretS2;
 
 public class HanTurretEvents
 {

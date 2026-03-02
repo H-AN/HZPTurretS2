@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using Mono.Cecil.Cil;
 using SwiftlyS2.Shared;
 
-namespace HanTurretS2;
+namespace HZPTurretS2;
 
 public class HanTurretS2MainConfig
 {

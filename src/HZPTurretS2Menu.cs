@@ -11,7 +11,7 @@ using SwiftlyS2.Shared.Players;
 using SwiftlyS2.Shared.Plugins;
 using SwiftlyS2.Shared.SteamAPI;
 
-namespace HanTurretS2;
+namespace HZPTurretS2;
 
 public class HanTurretMenu
 {
