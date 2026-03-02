@@ -19,6 +19,9 @@ public class HanTurretGlobals
 
     public Dictionary<ulong, Dictionary<string, HashSet<uint>>> PlayerTurretCounts = new();
 
+    public Dictionary<int, HashSet<uint>> TurretOwner = new();
+
+    public Dictionary<uint, uint> SentryBaseMap = new();
     public bool TurretCanFire { get; set; }
     public class SentryParticles
     {

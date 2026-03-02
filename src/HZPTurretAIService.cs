@@ -1,3 +1,4 @@
+using System.Numerics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SwiftlyS2.Shared;
@@ -36,6 +37,10 @@ public class HanTurretAIService
         if (Sentry == null || !Sentry.IsValid)
             return;
 
+        var _zpAPI = HanTurretS2._zpApi;
+        if (_zpAPI == null)
+            return;
+
         if (_globals.SentryThink.TryGetValue(SentryHandle.Raw, out var task))
         {
             task?.Cancel();
@@ -55,6 +60,12 @@ public class HanTurretAIService
                 }
             }
 
+            bool ownerIsZombie = _zpAPI.HZP_IsZombie(Owner.PlayerID);
+            if (ownerIsZombie)
+            {
+                KillTurret(SentryHandle);
+            }
+     
             var allPlayers = _core.PlayerManager.GetAllPlayers();
             float range = Range;
             float fireRange = Range - 200f;
@@ -64,6 +75,10 @@ public class HanTurretAIService
             foreach (var player in allPlayers)
             {
                 if (player == null || !player.IsValid)
+                    continue;
+
+                bool isZombie = _zpAPI.HZP_IsZombie(player.PlayerID);
+                if (!isZombie)
                     continue;
 
                 var pawn = player.PlayerPawn;
@@ -156,5 +171,58 @@ public class HanTurretAIService
         });
 
         _core.Scheduler.StopOnMapChange(_globals.SentryThink[SentryHandle.Raw]);
+    }
+
+    public void RemoveAllPlayerTurrets(int playerID)
+    {
+        if (!_globals.TurretOwner.TryGetValue(playerID, out var set))
+            return;
+
+        foreach (var headRaw in set.ToList())
+        {
+            var headHandle = new CHandle<CBaseModelEntity>(headRaw);
+            KillTurret(headHandle);
+        }
+
+        set.Clear();
+        _globals.TurretOwner.Remove(playerID);
+    }
+    public void KillTurret(CHandle<CBaseModelEntity> sentryHandle)
+    {
+        if (!sentryHandle.IsValid)
+            return;
+
+        var head = sentryHandle.Value;
+        if (head == null || !head.IsValid || !head.IsValidEntity)
+            return;
+
+        uint headRaw = sentryHandle.Raw;
+
+        if (_globals.SentryThink.TryGetValue(headRaw, out var task))
+        {
+            task?.Cancel();
+            _globals.SentryThink.Remove(headRaw);
+        }
+
+        CHandle<CBaseModelEntity> baseHandle = default;
+
+        if (_globals.SentryBaseMap.TryGetValue(headRaw, out var baseRaw))
+        {
+            baseHandle = new CHandle<CBaseModelEntity>(baseRaw);
+            _globals.SentryBaseMap.Remove(headRaw);
+        }
+
+        _core.Scheduler.NextTick(() =>
+        {
+            if (head.IsValid && head.IsValidEntity)
+                head.AcceptInput("Kill", 0);
+
+            if (baseHandle.IsValid)
+            {
+                var baseEnt = baseHandle.Value;
+                if (baseEnt != null && baseEnt.IsValid && baseEnt.IsValidEntity)
+                    baseEnt.AcceptInput("Kill", 0);
+            }
+        });
     }
 }

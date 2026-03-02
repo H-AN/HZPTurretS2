@@ -1,10 +1,11 @@
 
+using HanZombiePlagueS2;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SwiftlyS2.Shared;
 using SwiftlyS2.Shared.Plugins;
-using Microsoft.Extensions.Logging;
 
 
 
@@ -24,6 +25,16 @@ public partial class HanTurretS2(ISwiftlyCore core) : BasePlugin(core)
     private HanTurretEvents _Events = null!;
     private IOptionsMonitor<HanTurretS2Config> _turretCFGMonitor = null!;
     private IOptionsMonitor<HanTurretS2MainConfig> _turretMainCFGMonitor = null!;
+    public static IHanZombiePlagueAPI? _zpApi { get; private set; }
+
+    public override void UseSharedInterface(IInterfaceManager interfaceManager)
+    {
+        if (interfaceManager.HasSharedInterface("HanZombiePlague")) //获取api  Get API
+        {
+            _zpApi = interfaceManager.GetSharedInterface<IHanZombiePlagueAPI>("HanZombiePlague");  //获取api  Get API
+            Core.Logger.LogInformation($"[HZPTurretS2] 成功获取 HZP API/Successfully obtained HZP API，Hash: {_zpApi.GetHashCode()}");
+        }
+    }
     public override void Load(bool hotReload)
     {
         Core.Configuration.InitializeJsonWithModel<HanTurretS2MainConfig>("HZPTurretS2MainConfig.jsonc", "HZPTurretS2MainCFG").Configure(builder =>

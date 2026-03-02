@@ -39,6 +39,14 @@ public class HanTurretS2Service
         if (player == null || !player.IsValid)
             return null;
 
+        var _zpAPI = HanTurretS2._zpApi;
+        if (_zpAPI == null)
+            return null;
+
+        bool isZombie = _zpAPI.HZP_IsZombie(player.PlayerID);
+        if (isZombie)
+            return null;
+
         var Controller = player.Controller;
         if (Controller == null || !Controller.IsValid)
             return null;
@@ -143,8 +151,15 @@ public class HanTurretS2Service
         turretSet.Add(turretHandle.Raw);
 
         var Base = CreateSentryBase(player, turretHandle, propName, turretData.GlowColor, Pos);
-        var Sentry = CreateSentry(player, turretHandle, propName, turretData, Pos); 
+        var Sentry = CreateSentry(player, turretHandle, propName, turretData, Pos);
 
+        var baseHandle = _core.EntitySystem.GetRefEHandle(Base);
+        var headHandle = _core.EntitySystem.GetRefEHandle(Sentry);
+
+        if (baseHandle.IsValid && headHandle.IsValid)
+        {
+            _globals.SentryBaseMap[headHandle.Raw] = baseHandle.Raw;
+        }
 
         return Physics;
     }
@@ -225,6 +240,13 @@ public class HanTurretS2Service
         if (Sentryent == null)
             return null;
 
+        if (!_globals.TurretOwner.TryGetValue(player.PlayerID, out var set))
+        {
+            set = new HashSet<uint>();
+            _globals.TurretOwner[player.PlayerID] = set;
+        }
+        set.Add(SentryHandle.Raw);
+
         string BaseName = propName + "_Sentry";
         Sentryent!.Entity!.Name = BaseName;
 
@@ -247,6 +269,7 @@ public class HanTurretS2Service
 
         return Sentry;
     }
+
 
     /*
     public void RemoveTurretFromCount(IPlayer player, CPhysicsPropOverride entIndex, string turretName)

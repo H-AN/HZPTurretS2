@@ -20,16 +20,18 @@ public class HanTurretEvents
     private readonly IOptionsMonitor<HanTurretS2MainConfig> _mainconfig;
     private readonly IOptionsMonitor<HanTurretS2Config> _config;
     private readonly HanTurretGlobals _globals;
+    private readonly HanTurretAIService _aiservice;
 
     public HanTurretEvents(ISwiftlyCore core, ILogger<HanTurretEvents> logger,
         IOptionsMonitor<HanTurretS2Config> config, HanTurretGlobals globals,
-        IOptionsMonitor<HanTurretS2MainConfig> mainconfig)
+        IOptionsMonitor<HanTurretS2MainConfig> mainconfig, HanTurretAIService aiservice)
     {
         _core = core;
         _logger = logger;
         _config = config;
         _globals = globals;
         _mainconfig = mainconfig;
+        _aiservice = aiservice;
     }
 
     public void HookEvents()
@@ -38,6 +40,8 @@ public class HanTurretEvents
 
         _core.GameEvent.HookPre<EventRoundStart>(OnRoundStart);
         _core.GameEvent.HookPre<EventRoundEnd>(OnRoundEnd);
+
+        _core.GameEvent.HookPre<EventPlayerDeath>(OnPlayerDeath);
 
         _core.Event.OnMapUnload += Event_OnMapUnload;
     }
@@ -105,6 +109,17 @@ public class HanTurretEvents
         _globals.sentryParticles.Clear();
         _globals.TurretData.Clear();
         _globals.PlayerTurretCounts.Clear();
+
+        return HookResult.Continue;
+    }
+
+    private HookResult OnPlayerDeath(EventPlayerDeath @event)
+    {
+        var player = @event.UserIdPlayer;
+        if (player == null || !player.IsValid)
+            return HookResult.Continue;
+
+        _aiservice.RemoveAllPlayerTurrets(player.PlayerID);
 
         return HookResult.Continue;
     }

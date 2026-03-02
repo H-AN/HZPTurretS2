@@ -111,7 +111,12 @@ public class HanTurretMenu
                     var clicker = args.Player;
                     _core.Scheduler.NextTick(() =>
                     {
-                        if (!clicker.IsValid)
+                        var _zpAPI = HanTurretS2._zpApi;
+                        if (_zpAPI == null)
+                            return;
+
+                        bool isZombie = _zpAPI.HZP_IsZombie(clicker.PlayerID);
+                        if (!clicker.IsValid || isZombie || !clicker.IsAlive || clicker.IsFakeClient)
                             return;
 
                         _service.CreateSentryPhysics(clicker, turretCfg.Name);

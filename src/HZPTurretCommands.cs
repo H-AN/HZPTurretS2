@@ -46,7 +46,15 @@ public class HanTurretCommands
             player.SendMessage(MessageType.Chat, $"{_core.Translation.GetPlayerLocalizer(player)["MustBeAlive"]}");
             return;
         }
-            
+
+        var _zpAPI = HanTurretS2._zpApi;
+        if (_zpAPI == null)
+            return;
+
+        bool isZombie = _zpAPI.HZP_IsZombie(player.PlayerID);
+        if (isZombie)
+            return;
+
 
         _menus.OpenTurretMenu(player);
 
