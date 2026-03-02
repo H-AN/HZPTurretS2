@@ -311,11 +311,11 @@ public class HanTurretEvents
         bool canbreakage = turretData.Canbreakage;
         bool canfix = turretData.CanFixes;
 
-        string breakagemessage = canbreakage ? "可以破坏" : "无法破坏";
-        string canfixmessage = canfix ? "可以修理" : "无法修理";
-        string message = $"<span><font color='red'> 玩家 {owner.Name} 的 {turretData.Name}</font></span><br>" +
-         $"<span><font color='orange'>剩余血量 </font><font color='red'>{Sentry.Health}</font></span><br>" +
-         $"<span><font color='orange'>最大血量 </font><font color='red'>{Sentry.MaxHealth}</font></span><br>" +
+        string breakagemessage = canbreakage ? $"{_core.Translation.GetPlayerLocalizer(player)["TurretHudCanBreakage"]}" : $"{_core.Translation.GetPlayerLocalizer(player)["TurretHudCantBreakage"]}";
+        string canfixmessage = canfix ? $"{_core.Translation.GetPlayerLocalizer(player)["TurretHudCanFix"]}" : $"{_core.Translation.GetPlayerLocalizer(player)["TurretHudCantFix"]}";
+        string message = $"<span><font color='red'> {_core.Translation.GetPlayerLocalizer(player)["TurretHudOwnerPlayer", owner.Name, turretData.Name]}</font></span><br>" +
+         $"<span><font color='orange'>{_core.Translation.GetPlayerLocalizer(player)["TurretHudLeftHealth"]} </font><font color='red'>{Sentry.Health}</font></span><br>" +
+         $"<span><font color='orange'>{_core.Translation.GetPlayerLocalizer(player)["TurretHudMaxHealth"]} </font><font color='red'>{Sentry.MaxHealth}</font></span><br>" +
          $"<span><font color='green'>{breakagemessage} </font></span><br>" +
          $"<span><font color='green'>{canfixmessage} </font></span><br>";
 
