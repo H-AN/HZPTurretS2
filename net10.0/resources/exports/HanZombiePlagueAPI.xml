@@ -1,0 +1,531 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HanZombiePlagueAPI</name>
+    </assembly>
+    <members>
+        <member name="T:HanZombiePlagueS2.IHanZombiePlagueAPI">
+            <summary>
+            Han Zombie Plague API.
+            Han 僵尸瘟疫 API.
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.IHanZombiePlagueAPI.GameStart">
+            <summary>
+            Gets whether the game has started.
+            获取游戏是否已经开始。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_IsZombie(System.Int32)">
+            <summary>
+            Checks whether the specified player is a zombie.
+            检查指定玩家是否为丧尸。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_IsMotherZombie(System.Int32)">
+            <summary>
+            Checks whether the specified player is a mother zombie.
+            检查指定玩家是否为母体丧尸。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_IsNemesis(System.Int32)">
+            <summary>
+            Checks whether the specified player is a Nemesis.
+            检查指定玩家是否为复仇之神（Nemesis）。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_IsAssassin(System.Int32)">
+            <summary>
+            Checks whether the specified player is an Assassin zombie.
+            检查指定玩家是否为暗杀者丧尸（Assassin）。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_IsSurvivor(System.Int32)">
+            <summary>
+            Checks whether the specified player is a Survivor.
+            检查指定玩家是否为幸存者（幸存者职业）。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_IsSniper(System.Int32)">
+            <summary>
+            Checks whether the specified player is a Sniper.
+            检查指定玩家是否为狙击手（狙击手职业）。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_IsHero(System.Int32)">
+            <summary>
+            Checks whether the specified player is a Hero.
+            检查指定玩家是否为英雄（英雄职业）。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_PlayerHaveScbaSuit(System.Int32)">
+            <summary>
+            Checks whether the specified player has purchased and owns the SCBA suit (chemical protective suit).
+            检查指定玩家是否已购买并拥有防化服（SCBA Suit）。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_PlayerHaveGodState(System.Int32)">
+            <summary>
+            Checks whether the specified player is currently in God Mode (invincibility) purchased state.
+            检查指定玩家是否处于已购买的无敌状态（God Mode）。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_PlayerHaveInfiniteAmmoState(System.Int32)">
+            <summary>
+            Checks whether the specified player is currently in Infinite Ammo state purchased.
+            检查指定玩家是否处于已购买的无限子弹状态。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GetCurrentModeName">
+            <summary>
+            Gets the name of the current game mode/round type.
+            获取当前回合的模式名称。
+            可用于在不同模式下实现自定义逻辑。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetTargetZombie(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Directly turns the target human player into a zombie (non-infection method).
+            将目标人类玩家直接设置为丧尸（非感染方式）。
+            可用于实现道具如“T病毒试剂”等非感染转化效果。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetTargetHuman(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Directly turns the target zombie player back into a human.
+            将目标丧尸玩家直接设置回人类。
+            （直接转换，非通过感染或解药方式）
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_InfectMotherZombie(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Infects the target human player and turns them into a Mother Zombie.
+            将目标人类玩家感染并转化为母体丧尸。
+            感染逻辑与游戏寻找母体丧尸的规则一致。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_InfectPlayer(SwiftlyS2.Shared.Players.IPlayer,System.Boolean)">
+            <summary>
+            Infects the target human player and turns them into a regular zombie.
+            将目标人类玩家感染并转化为普通丧尸。
+            感染逻辑与游戏中玩家被感染的规则一致。
+            </summary>
+            <param name="player">The player to infect.</param>
+            <param name="IgnoreScbaSuit">Whether to ignore the target's SCBA suit (chemical protective suit) protection.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetTargetNemesis(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Directly turns the target human player into a Nemesis zombie.
+            将目标人类玩家直接设置为复仇之神（Nemesis）。
+            </summary>
+            <param name="player">The player to set as Nemesis.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetTargetAssassin(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Directly turns the target human player into an Assassin zombie.
+            将目标人类玩家直接设置为暗杀者丧尸（Assassin）。
+            </summary>
+            <param name="player">The player to set as Assassin.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetTargetTVaccine(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Administers T-Virus vaccine/serum to the target zombie player, turning them back to human (if possible).
+            让目标丧尸玩家服用T病毒血清，将其变回人类（特殊丧尸无法改变）。
+            </summary>
+            <param name="player">The zombie player to administer the vaccine to.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetTargetSniper(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Directly turns the target human player into a Sniper.
+            将目标人类玩家直接设置为狙击手（Sniper）。
+            </summary>
+            <param name="player">The player to set as Sniper.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetTargetSurvivor(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Directly turns the target human player into a Survivor.
+            将目标人类玩家直接设置为幸存者（Survivor）。
+            </summary>
+            <param name="player">The player to set as Survivor.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetTargetHero(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Directly turns the target human player into a Hero.
+            将目标人类玩家直接设置为英雄（Hero）。
+            </summary>
+            <param name="player">The player to set as Hero.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GiveTVirusGrenade(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Gives the specified zombie player a T-Virus Grenade.
+            给予指定丧尸玩家一枚T病毒炸弹。
+            </summary>
+            <param name="player">The zombie player to give the grenade to.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GiveScbaSuit(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Gives the specified human player an SCBA suit (chemical protective suit).
+            给予指定人类玩家一件防化服（SCBA Suit）。
+            </summary>
+            <param name="player">The human player to give the SCBA suit to.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GiveGodState(SwiftlyS2.Shared.Players.IPlayer,System.Single)">
+            <summary>
+            Grants the specified player God Mode (invincibility) for a custom duration in seconds.
+            给予指定玩家无敌状态（God Mode），持续自定义的秒数。
+            </summary>
+            <param name="player">The player to grant God Mode to.</param>
+            <param name="time">Duration of invincibility in seconds (e.g. 30f for 30 seconds).</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GiveInfiniteAmmo(SwiftlyS2.Shared.Players.IPlayer,System.Single)">
+            <summary>
+            Grants the specified player Infinite Ammo mode for a custom duration in seconds.
+            给予指定玩家无限子弹状态，持续自定义的秒数。
+            </summary>
+            <param name="player">The player to grant Infinite Ammo to.</param>
+            <param name="time">Duration of infinite ammo in seconds.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_HumanAddHealth(SwiftlyS2.Shared.Players.IPlayer,System.Int32)">
+            <summary>
+            Adds a specified amount of health to the human player (cannot exceed the max health defined for their class/role in config).
+            为指定人类玩家增加指定数值血量（无法超过配置中该职业/角色的最大血量上限）。
+            </summary>
+            <param name="player">The human player to add health to.</param>
+            <param name="valve">The amount of health to add (positive integer).</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GetZombieClassname(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Gets the internal classname/string identifier of the current zombie class/type for the player.
+            获取指定玩家的丧尸职业/类型名称（Classname）。
+            可用于制作技能组、判断特定丧尸类型等逻辑。
+            </summary>
+            <param name="player">The zombie player whose class name to retrieve.</param>
+            <returns>The zombie class name as a string.</returns>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GetZombieMaxHealth(SwiftlyS2.Shared.Players.IPlayer,System.Boolean)">
+            <summary>
+            Gets the maximum health value for the player's current zombie class.
+            获取指定玩家的丧尸职业最大血量值。
+            </summary>
+            <param name="player">The zombie player to query.</param>
+            <param name="original">
+            true  → Returns the max health value from the plugin's configuration.<br/>
+            false → Returns the current pawn.MaxHealth value (may be modified in-game).
+            </param>
+            <returns>The maximum health value for this zombie class/type.</returns>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_CheckRoundWinConditions">
+            <summary>
+            Immediately checks the round win conditions for both teams.
+            Calls this method to force-check if any win condition is met (e.g., team member count).
+            If a winning condition is satisfied, the round will end immediately.
+            立即检查当前回合的胜利条件。
+            调用后会立刻判断双方阵营人数或其他条件是否满足胜利要求，
+            如果满足任一结束条件，则立即结束回合。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetHumanWin">
+            <summary>
+            Forces the human team to win the current round immediately.
+            强制让人类阵营立即获胜（结束当前回合）。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetZombieWin">
+            <summary>
+            Forces the zombie team to win the current round immediately.
+            强制让丧尸阵营立即获胜（结束当前回合）。
+            </summary>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetPlayerGlow(SwiftlyS2.Shared.Players.IPlayer,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Sets a glowing outline effect on the specified player (visible through walls).
+            The glow is automatically removed when the player dies.
+            Uses RGBA color values (0–255 for each channel).
+            为指定玩家设置外发光效果（可透视墙体）。
+            玩家死亡后发光效果会自动移除。
+            使用 RGBA 值（每个通道 0–255）。
+            </summary>
+            <param name="player">The player to apply the glow effect to.</param>
+            <param name="R">Red channel value (0–255).</param>
+            <param name="G">Green channel value (0–255).</param>
+            <param name="B">Blue channel value (0–255).</param>
+            <param name="A">Alpha (opacity) value (0–255, 0 = fully transparent, 255 = fully opaque).</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_RemovePlayerGlow(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Removes the glowing outline effect from the specified player (if any exists).
+            删除指定玩家的外发光效果（如果存在）。
+            </summary>
+            <param name="player">The player whose glow effect should be removed.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetPlayerFov(SwiftlyS2.Shared.Players.IPlayer,System.Int32)">
+            <summary>
+            Sets a custom Field of View (FOV) for the specified player.
+            The FOV will automatically reset to 90 when the player dies.
+            为指定玩家设置自定义视野范围（FOV）。
+            玩家死亡后会自动恢复为默认值 90。
+            </summary>
+            <param name="player">The player to change FOV for.</param>
+            <param name="fov">The desired FOV value (typically between 70–120, depending on game limits).</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GiveFireGrenade(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Gives the specified player a fire/incendiary grenade (burning damage over time).
+            给予指定玩家一枚燃烧/高爆手雷（造成持续燃烧伤害）。
+            </summary>
+            <param name="player">The player to receive the fire grenade.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GiveLightGrenade(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Gives the specified player a flashbang / illumination grenade (light effect).
+            给予指定玩家一枚照明弹（照明效果）。
+            </summary>
+            <param name="player">The player to receive the light grenade.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GiveFreezeGrenade(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Gives the specified player a Freeze Grenade (freezes targets on explosion).
+            给予指定玩家一枚冰冻弹（Freeze Grenade，爆炸后可冻结目标）。
+            </summary>
+            <param name="player">The player to receive the freeze grenade.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GiveTeleportGrenade(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Gives the specified player a Teleport Grenade (allows teleportation on explosion).
+            给予指定玩家一枚传送手雷（Teleport Grenade，爆炸后可实现传送效果）。
+            </summary>
+            <param name="player">The player to receive the teleport grenade.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GiveIncGrenade(SwiftlyS2.Shared.Players.IPlayer)">
+            <summary>
+            Gives the specified player an Incendiary Grenade (causes burning/fire damage over time).
+            给予指定玩家一枚火焰弹/燃烧弹（Incendiary Grenade，造成持续火焰/燃烧伤害）。
+            </summary>
+            <param name="player">The player to receive the incendiary grenade.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_SetExternalPreference(System.UInt64,System.String)">
+            <summary>
+            Externally sets the player's preferred zombie class (for database persistence).
+            Used by external systems/plugins to save player preferences to their own database,
+            then sync the value to the plugin's internal dictionary.
+            If className is null or empty string, it means "random" preference.
+            外部设置玩家的丧尸职业偏好（用于数据库持久化保存）。
+            供外部插件/系统调用，将玩家偏好保存到自己的数据库后，
+            再同步到本插件内部的字典中。
+            如果 className 为 null 或空字符串，则代表“随机”偏好。
+            </summary>
+            <param name="steamId">The player's SteamID64.</param>
+            <param name="className">The preferred zombie class name, or null/empty for random.</param>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GetZombieNameBySteamid(System.UInt64)">
+            <summary>
+            Retrieves the player's pre-set zombie class name based on SteamID (for external plugins).
+            根据 SteamID 获取玩家预设的丧尸职业名称（供外部插件调用）。
+            </summary>
+            <param name="steamId">The player's SteamID64.</param>
+            <returns>
+            The zombie class name the player has set as preference;
+            returns null if the player has set it to random or has no record.
+            返回玩家预设的丧尸职业名称；若设为随机或无记录，则返回 null。
+            </returns>
+        </member>
+        <member name="M:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_GetZombieProperties(System.String)">
+            <summary>
+            Gets a snapshot of all core properties for the specified zombie class/type by name.
+            根据丧尸职业名称获取该职业的所有核心属性快照（当前配置值）。
+            </summary>
+            <param name="zombieName">The internal name of the zombie class/type.</param>
+            <returns>
+            A ZombiePropertySnapshot containing the core properties, or null if the class does not exist.
+            返回包含核心属性的快照对象；若该职业名称不存在，则返回 null。
+            </returns>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnGameStart">
+            <summary>
+            Event triggered when the game round officially starts or ends.
+            游戏回合正式开始或结束时触发的事件。
+            </summary>
+            <remarks>
+            The bool parameter indicates the game start state:<br/>
+            true  → Game/round has started<br/>
+            false → Game/round has ended
+            </remarks>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnPlayerInfect">
+            <summary>
+            广播玩家被感染事件（玩家转化为丧尸时触发）。<br/>
+            Broadcasts the player infection event (triggered when a player turns into a zombie).<br/>
+            <br/>
+            参数顺序 / Parameter order:<br/>
+            1. IPlayer? 感染者（attacker，可能为 null，如果没有明确感染来源）<br/>
+               IPlayer? Infector (attacker, may be null if no clear infection source)<br/>
+            2. IPlayer 被感染者（victim，被转化为丧尸的玩家）<br/>
+               IPlayer Infected player (victim, the player becoming a zombie)<br/>
+            3. bool 是否由手雷/爆炸物感染（true = 手雷感染，false = 普通感染）<br/>
+               bool Whether caused by grenade/explosive (true = grenade infection, false = normal infection)<br/>
+            4. string 被感染后转化为的丧尸职业名称（zombie class name）<br/>
+               string Zombie class name the infected player is turned into (zombie class name)
+            </summary>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnMotherZombieSelected">
+            <summary>
+            广播母体丧尸被选择事件（回合开始时母体丧尸确定）。<br/>
+            Broadcasts the Mother Zombie selection event (when Mother Zombie is chosen at round start).<br/>
+            <br/>
+            参数 / Parameter:<br/>
+            IPlayer 母体丧尸玩家（被选为母体丧尸的玩家对象）<br/>
+            IPlayer Mother Zombie player (the player selected as Mother Zombie)
+            </summary>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnNemesisSelected">
+            <summary>
+            广播复仇之神被选择事件（回合开始时 Nemesis 确定）。<br/>
+            Broadcasts the Nemesis selection event (when Nemesis is chosen at round start).<br/>
+            <br/>
+            参数 / Parameter:<br/>
+            IPlayer 复仇之神玩家（被选为 Nemesis 的玩家对象）<br/>
+            IPlayer Nemesis player (the player selected as Nemesis)
+            </summary>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnAssassinSelected">
+            <summary>
+            广播暗杀者被选择事件（回合开始时 Assassin 确定）。<br/>
+            Broadcasts the Assassin selection event (when Assassin is chosen at round start).<br/>
+            <br/>
+            参数 / Parameter:<br/>
+            IPlayer 暗杀者玩家（被选为 Assassin 的玩家对象）<br/>
+            IPlayer Assassin player (the player selected as Assassin)
+            </summary>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnHeroSelected">
+            <summary>
+            广播英雄被选择事件（回合开始时 Hero 确定）。<br/>
+            Broadcasts the Hero selection event (when Hero is chosen at round start).<br/>
+            <br/>
+            参数 / Parameter:<br/>
+            IPlayer 英雄玩家（被选为 Hero 的玩家对象）<br/>
+            IPlayer Hero player (the player selected as Hero)
+            </summary>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnSurvivorSelected">
+            <summary>
+            广播幸存者被选择事件（回合开始时 Survivor 确定）。<br/>
+            Broadcasts the Survivor selection event (when Survivor is chosen at round start).<br/>
+            <br/>
+            参数 / Parameter:<br/>
+            IPlayer 幸存者玩家（被选为 Survivor 的玩家对象）<br/>
+            IPlayer Survivor player (the player selected as Survivor)
+            </summary>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnSniperSelected">
+            <summary>
+            广播狙击手被选择事件（回合开始时 Sniper 确定）。<br/>
+            Broadcasts the Sniper selection event (when Sniper is chosen at round start).<br/>
+            <br/>
+            参数 / Parameter:<br/>
+            IPlayer 狙击手玩家（被选为 Sniper 的玩家对象）<br/>
+            IPlayer Sniper player (the player selected as Sniper)
+            </summary>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnHumanWin">
+            <summary>
+            广播人类阵营胜利事件（回合结束时宣布胜利阵营）。<br/>
+            Broadcasts the human team victory event (triggered at round end when declaring the winner).<br/>
+            <br/>
+            参数 / Parameter:<br/>
+            bool true = 人类胜利 / Humans win<br/>
+                false = 丧尸胜利 / Zombies win
+            </summary>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnGameModeSelect">
+            <summary>
+            广播当前游戏模式/回合类型被选择事件。<br/>
+            Broadcasts the game mode / round type selection event.<br/>
+            <br/>
+            参数 / Parameter:<br/>
+            string 配置中的模式名称（当前选中的游戏模式名称，可用于自定义模式逻辑）<br/>
+            string Game mode name from configuration (the selected mode name, can be used for custom mode logic)
+            </summary>
+        </member>
+        <member name="E:HanZombiePlagueS2.IHanZombiePlagueAPI.HZP_OnPreferenceChanged">
+            <summary>
+            当玩家通过菜单更改丧尸职业偏好后广播的事件。<br/>
+            Broadcasts the event when a player changes their zombie class preference via menu.<br/>
+            外部插件可监听此事件来将玩家的偏好保存到数据库。<br/>
+            External plugins can listen to this event to save the player's preference to database.<br/>
+            <br/>
+            参数 / Parameters:<br/>
+            1. ulong steamid - 更改偏好的玩家的 SteamID64<br/>
+               ulong steamid - SteamID64 of the player who changed preference<br/>
+            2. string? 丧尸名字 - 新选择的丧尸职业名称；null 或空字符串表示“随机”<br/>
+               string? Zombie class name - New preferred zombie class name; null or empty string means "random"
+            </summary>
+        </member>
+        <member name="T:HanZombiePlagueS2.ZombiePropertySnapshot">
+            <summary>
+            丧尸职业的核心属性快照（从配置中读取的原始值快照）。
+            Snapshot of core properties for a zombie class/type (original values read from configuration).
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.ZombiePropertySnapshot.Name">
+            <summary>
+            丧尸职业名称（内部唯一标识）。
+            Zombie class name (internal unique identifier).
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.ZombiePropertySnapshot.Health">
+            <summary>
+            普通状态下的最大血量。
+            Maximum health in normal zombie state.
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.ZombiePropertySnapshot.MotherHealth">
+            <summary>
+            作为母体丧尸（Mother Zombie）时的最大血量。
+            Maximum health when this zombie is selected as Mother Zombie.
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.ZombiePropertySnapshot.Speed">
+            <summary>
+            移动速度（通常为 1.0f 为默认人类速度，丧尸可能更高）。
+            Movement speed (1.0f is typically default human speed; zombies may have higher values).
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.ZombiePropertySnapshot.Damage">
+            <summary>
+            伤害加成。
+            Damage multiplier.
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.ZombiePropertySnapshot.Gravity">
+            <summary>
+            重力缩放值（影响跳跃高度、掉落速度等，越小跳得越高）。
+            Gravity scale .
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.ZombiePropertySnapshot.EnableRegen">
+            <summary>
+            是否启用自动回血功能。
+            Whether automatic health regeneration is enabled.
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.ZombiePropertySnapshot.HpRegenSec">
+            <summary>
+            自动回血的间隔时间（秒）。
+            Interval time between each health regeneration tick (in seconds).
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.ZombiePropertySnapshot.HpRegenHp">
+            <summary>
+            每次自动回血恢复的血量值。
+            Amount of health restored per regeneration tick.
+            </summary>
+        </member>
+        <member name="P:HanZombiePlagueS2.ZombiePropertySnapshot.ModelPath">
+            <summary>
+            该丧尸职业使用的模型路径（游戏中显示的外观模型）。
+            Model path used for this zombie class (the visual model in-game).
+            </summary>
+        </member>
+    </members>
+</doc>
