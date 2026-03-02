@@ -66,6 +66,7 @@ public class HanTurretAIService
                 if (_globals.TurretHeadToPhysics.TryGetValue(SentryHandle.Raw, out var phyRaw))
                 {
                     var phyHandle = new CHandle<CPhysicsPropOverride>(phyRaw);
+                    _effect.CreateParticleAtPos(phyHandle, "particles/explosions_fx/explosion_basic.vpcf");
                     KillTurret(phyHandle);
                 }
             }
@@ -184,6 +185,7 @@ public class HanTurretAIService
             foreach (var phyRaw in set.ToList())
             {
                 var phyHandle = new CHandle<CPhysicsPropOverride>(phyRaw);
+                _effect.CreateParticleAtPos(phyHandle, "particles/explosions_fx/explosion_basic.vpcf");
                 KillTurret(phyHandle);
             }
 
@@ -226,46 +228,8 @@ public class HanTurretAIService
         });
 
         _globals.TurretPartsMap.Remove(phyRaw);
+
     }
 
-    /*
-    public void KillTurret(CHandle<CBaseModelEntity> sentryHandle)
-    {
-        if (!sentryHandle.IsValid)
-            return;
-
-        var head = sentryHandle.Value;
-        if (head == null || !head.IsValid || !head.IsValidEntity)
-            return;
-
-        uint headRaw = sentryHandle.Raw;
-
-        if (_globals.SentryThink.TryGetValue(headRaw, out var task))
-        {
-            task?.Cancel();
-            _globals.SentryThink.Remove(headRaw);
-        }
-
-        CHandle<CBaseModelEntity> baseHandle = default;
-
-        if (_globals.SentryBaseMap.TryGetValue(headRaw, out var baseRaw))
-        {
-            baseHandle = new CHandle<CBaseModelEntity>(baseRaw);
-            _globals.SentryBaseMap.Remove(headRaw);
-        }
-
-        _core.Scheduler.NextTick(() =>
-        {
-            if (head.IsValid && head.IsValidEntity)
-                head.AcceptInput("Kill", 0);
-
-            if (baseHandle.IsValid)
-            {
-                var baseEnt = baseHandle.Value;
-                if (baseEnt != null && baseEnt.IsValid && baseEnt.IsValidEntity)
-                    baseEnt.AcceptInput("Kill", 0);
-            }
-        });
-    }
-    */
+    
 }

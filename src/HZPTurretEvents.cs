@@ -1,5 +1,6 @@
 
 
+using System.Numerics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Mono.Cecil.Cil;
@@ -21,10 +22,14 @@ public class HanTurretEvents
     private readonly IOptionsMonitor<HanTurretS2Config> _config;
     private readonly HanTurretGlobals _globals;
     private readonly HanTurretAIService _aiservice;
+    private readonly HanTurretHelpers _helpers;
+    private readonly HanTurretEffectService _effect;
+
 
     public HanTurretEvents(ISwiftlyCore core, ILogger<HanTurretEvents> logger,
         IOptionsMonitor<HanTurretS2Config> config, HanTurretGlobals globals,
-        IOptionsMonitor<HanTurretS2MainConfig> mainconfig, HanTurretAIService aiservice)
+        IOptionsMonitor<HanTurretS2MainConfig> mainconfig, HanTurretAIService aiservice,
+        HanTurretHelpers helpers, HanTurretEffectService Effect)
     {
         _core = core;
         _logger = logger;
@@ -32,6 +37,8 @@ public class HanTurretEvents
         _globals = globals;
         _mainconfig = mainconfig;
         _aiservice = aiservice;
+        _helpers = helpers;
+        _effect = Effect;
     }
 
     public void HookEvents()
@@ -56,6 +63,13 @@ public class HanTurretEvents
         if (victim == null || !victim.IsValid)
             return;
 
+        var vEntity = victim.Entity;
+        if (vEntity == null || !vEntity.IsValid)
+            return;
+
+        if (string.IsNullOrEmpty(vEntity.Name) || !vEntity.Name.StartsWith("华仔炮塔_"))
+            return;
+
         var attacker = @event.Info.Attacker.Value;
         if (attacker == null || !attacker.IsValid)
             return;
@@ -68,34 +82,83 @@ public class HanTurretEvents
         if (AttackerPlayer == null || !AttackerPlayer.IsValid)
             return;
 
-        var vEntity = victim.Entity;
-        if (vEntity == null || !vEntity.IsValid)
+        var _zpAPI = HanTurretS2._zpApi;
+        if (_zpAPI == null)
             return;
 
-        if (string.IsNullOrEmpty(vEntity.Name) || !vEntity.Name.StartsWith("华仔炮塔_"))
-            return;
 
         var phy = victim.As<CPhysicsPropOverride>();
         if (phy == null || !phy.IsValid || !phy.IsValidEntity)
             return;
 
-        _logger.LogInformation($"攻击者 {AttackerPlayer.Name}, 被攻击者 {victim.DesignerName} {victim.Entity.Name} 伤害 {@event.Info.Damage}");
-        _logger.LogInformation($"最大血量  {phy.MaxHealth} 血量 {phy.Health}");
-        uint phyRaw = _core.EntitySystem.GetRefEHandle(phy).Raw;
+        uint hitRaw = _core.EntitySystem.GetRefEHandle(phy).Raw;
+        uint finalPhyRaw = hitRaw; 
 
 
-        if (_globals.TurretPartsMap.TryGetValue(phyRaw, out var parts))
+        if (_globals.TurretHeadToPhysics.TryGetValue(hitRaw, out uint mainFromHead))
+            finalPhyRaw = mainFromHead;
+        else if (_globals.TurretBaseToPhysics.TryGetValue(hitRaw, out uint mainFromBase))
+            finalPhyRaw = mainFromBase;
+
+
+        var phyHandle = new CHandle<CPhysicsPropOverride>(finalPhyRaw);
+        var phyEntity = phyHandle.Value;
+
+        if (phyEntity == null || !phyEntity.IsValid) return;
+
+
+       // _logger.LogInformation($"1 命中部位: {vEntity.Name}, 实际指向主体: {phyEntity.Entity.Name}");
+
+
+        if (_globals.TurretPartsMap.TryGetValue(finalPhyRaw, out var parts))
         {
-            var headHandle = new CHandle<CBaseModelEntity>(parts.head);
-            var baseHandle = new CHandle<CBaseModelEntity>(parts.baseEnt);
+            
+            bool attackerIsZombie = _zpAPI.HZP_IsZombie(AttackerPlayer.PlayerID);
+            int amount = (int)@event.Info.Damage; 
+            if (!attackerIsZombie)
+            {
+                if (_globals.TurretData.TryGetValue(finalPhyRaw, out var turretData) && turretData.Canbreakage)
+                {
+                    phyEntity.Health -= (int)@event.Info.Damage;
+                    phyEntity.HealthUpdated();
 
-            var phyHandle = new CHandle<CPhysicsPropOverride>(phyRaw);
-            _aiservice.KillTurret(phyHandle);
+                    _helpers.EmitSoundFromPhyEntity(phyHandle, "Breakable.MatMetal");
+                    //_logger.LogInformation($"2 攻击者 {AttackerPlayer.Name}, 主体剩余血量 {phyEntity.Health}");
 
-            _globals.TurretPartsMap.Remove(phyRaw);
+                    if (phyEntity.Health <= 0)
+                    {
+                        _effect.CreateParticleAtPos(phyHandle, "particles/explosions_fx/explosion_basic.vpcf");
+                        _helpers.EmitSoundFromPhyEntity(phyHandle, "BaseGrenade.Explode");
+                        _aiservice.KillTurret(phyHandle);
+                        
+                    }
+ 
+                }
+            }
+            else
+            {
+                if (_globals.TurretData.TryGetValue(finalPhyRaw, out var turretData) && turretData.CanFixes)
+                {
+                    if (phyEntity.Health < phyEntity.MaxHealth)
+                    {
+                        phyEntity.Health += amount;
+
+                        if (phyEntity.Health > phyEntity.MaxHealth)
+                            phyEntity.Health = phyEntity.MaxHealth;
+
+                        phyEntity.HealthUpdated();
+
+                        _helpers.EmitSoundFromPhyEntity(phyHandle, "SolidMetal.BulletImpact");
+                    }
+                }
+                
+            }
+
+            _effect.CreateParticleAtPos(phyHandle, "particles/explosions_fx/explosion_c4_interior_sparktrails.vpcf");
+
         }
-
     }
+
 
     private void Event_OnClientDisconnected(SwiftlyS2.Shared.Events.IOnClientDisconnectedEvent @event)
     {
@@ -126,6 +189,10 @@ public class HanTurretEvents
     {
         @event.AddItem("models/stk_sentry_guns/sentry/sentry_physbox.vmdl");
         @event.AddItem("models/stk_sentry_guns/sentry/base.vmdl");
+        @event.AddItem("soundevents/game_sounds_physics.vsndevts");
+        @event.AddItem("soundevents/game_sounds_weapons.vsndevts");
+        @event.AddItem("particles/explosions_fx/explosion_basic.vpcf");
+        @event.AddItem("particles/explosions_fx/explosion_c4_interior_sparktrails.vpcf");
 
         var maincfg = _mainconfig.CurrentValue;
         if (!string.IsNullOrEmpty(maincfg.TurretBaseModel))
@@ -198,4 +265,14 @@ public class HanTurretEvents
         return HookResult.Continue;
     }
 
+    public void ShowTurretInfo(IPlayer player, CHandle<CPhysicsPropOverride> sentryHandle) 
+    {
+        if (!sentryHandle.IsValid)
+            return;
+
+        if (player == null || !player.IsValid || player.IsFakeClient || !player.IsAlive)
+            return;
+        
+
+    }
 }

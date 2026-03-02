@@ -175,7 +175,7 @@ public class HanTurretS2Service
         }
 
         _globals.TurretHeadToPhysics[headHandle.Raw] = phyHandle.Raw;
-
+        _globals.TurretBaseToPhysics[baseHandle.Raw] = phyHandle.Raw;
         return Physics;
     }
 
