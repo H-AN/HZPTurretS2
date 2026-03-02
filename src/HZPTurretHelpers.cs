@@ -21,43 +21,6 @@ public class HanTurretHelpers
         _logger = logger;
     }
 
-    public SwiftlyS2.Shared.Natives.Vector CalculateKnockbackDirection(CHandle<CBaseModelEntity> sentryHandle, IPlayer target, float force)
-    {
-        if (!sentryHandle.IsValid)
-            return new SwiftlyS2.Shared.Natives.Vector(0, 0, 0);
-
-        var Sentry = sentryHandle.Value;
-        if (Sentry == null || !Sentry.IsValid)
-            return new SwiftlyS2.Shared.Natives.Vector(0, 0, 0);
-
-        var sentryPos = Sentry.AbsOrigin;
-        if (sentryPos == null)
-            return new SwiftlyS2.Shared.Natives.Vector(0, 0, 0);
-
-        var pawn = target.PlayerPawn;
-        if (pawn == null || !pawn.IsValid)
-            return new SwiftlyS2.Shared.Natives.Vector(0, 0, 0);
-
-        var targetPos = pawn.AbsOrigin;
-        if (targetPos == null)
-            return new SwiftlyS2.Shared.Natives.Vector(0, 0, 0);
-
-        var dir = new SwiftlyS2.Shared.Natives.Vector(
-            targetPos.Value.X - sentryPos.Value.X,
-            targetPos.Value.Y - sentryPos.Value.Y,
-            targetPos.Value.Z - sentryPos.Value.Z
-        );
-
-        float length = MathF.Sqrt(dir.X * dir.X + dir.Y * dir.Y + dir.Z * dir.Z);
-        if (length <= 0.01f) return new SwiftlyS2.Shared.Natives.Vector(0, 0, 0);
-
-        return new SwiftlyS2.Shared.Natives.Vector(
-            dir.X / length * force,
-            dir.Y / length * force,
-            50f 
-        );
-    }
-
 
     public void EmitSoundFromEntity(CHandle<CBaseModelEntity> sentryHandle, string SoundPath)
     {

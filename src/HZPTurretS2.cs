@@ -26,14 +26,14 @@ public partial class HanTurretS2(ISwiftlyCore core) : BasePlugin(core)
     private IOptionsMonitor<HanTurretS2MainConfig> _turretMainCFGMonitor = null!;
     public override void Load(bool hotReload)
     {
-        Core.Configuration.InitializeJsonWithModel<HanTurretS2MainConfig>("HanTurretS2MainConfig.jsonc", "HanTurretS2MainCFG").Configure(builder =>
+        Core.Configuration.InitializeJsonWithModel<HanTurretS2MainConfig>("HZPTurretS2MainConfig.jsonc", "HZPTurretS2MainCFG").Configure(builder =>
         {
-            builder.AddJsonFile("HanTurretS2MainConfig.jsonc", false, true);
+            builder.AddJsonFile("HZPTurretS2MainConfig.jsonc", false, true);
         });
 
-        Core.Configuration.InitializeJsonWithModel<HanTurretS2Config>("HanTurretS2.jsonc", "HanTurretS2CFG").Configure(builder =>
+        Core.Configuration.InitializeJsonWithModel<HanTurretS2Config>("HZPTurretS2.jsonc", "HZPTurretS2CFG").Configure(builder =>
         {
-            builder.AddJsonFile("HanTurretS2.jsonc", false, true);
+            builder.AddJsonFile("HZPTurretS2.jsonc", false, true);
         });
 
         var collection = new ServiceCollection();
@@ -41,11 +41,11 @@ public partial class HanTurretS2(ISwiftlyCore core) : BasePlugin(core)
 
         collection
             .AddOptionsWithValidateOnStart<HanTurretS2MainConfig>()
-            .BindConfiguration("HanTurretS2MainCFG");
+            .BindConfiguration("HZPTurretS2MainCFG");
 
         collection
             .AddOptionsWithValidateOnStart<HanTurretS2Config>()
-            .BindConfiguration("HanTurretS2CFG");
+            .BindConfiguration("HZPTurretS2CFG");
 
         collection.AddSingleton<HanTurretGlobals>();
         collection.AddSingleton<HanTurretS2Service>();
