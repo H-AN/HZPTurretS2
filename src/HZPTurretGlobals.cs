@@ -22,6 +22,7 @@ public class HanTurretGlobals
     public Dictionary<ulong, Dictionary<string, HashSet<uint>>> PlayerTurretCounts = new();
 
     public Dictionary<int, HashSet<uint>> TurretOwner = new();
+    public Dictionary<uint, int> TurretToPlayer = new();
 
     public Dictionary<uint, (uint head, uint baseEnt)> TurretPartsMap = new();
 

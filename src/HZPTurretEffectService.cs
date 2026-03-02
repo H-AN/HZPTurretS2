@@ -278,4 +278,42 @@ public class HanTurretEffectService
         return particle;
     }
 
+    public void CreateExplosionAtPos(CHandle<CPhysicsPropOverride> phyHandle)
+    {
+        if (!phyHandle.IsValid)
+            return;
+
+        uint phyRaw = phyHandle.Raw;
+
+        if (!_globals.TurretPartsMap.TryGetValue(phyRaw, out var parts))
+            return;
+
+        var particle = _core.EntitySystem.CreateEntityByDesignerName<CEnvParticleGlow>("env_particle_glow");
+        if (!particle.IsValid || !particle.IsValidEntity)
+            return;
+
+        var headHandle = new CHandle<CBaseModelEntity>(parts.head);
+        if (!headHandle.IsValid)
+            return;
+
+        var HandleEntity = headHandle.Value;
+        if (HandleEntity == null || !HandleEntity.IsValid || !HandleEntity.IsValidEntity)
+            return;
+
+        Vector pos = HandleEntity.AbsOrigin ?? Vector.Zero;
+
+        particle.StartActive = true;
+        particle.EffectName = "particles/explosions_fx/explosion_c4_short.vpcf";
+        particle.AlphaScale = 1150f;
+        particle.RadiusScale = 110f;
+        particle.SelfIllumScale = 0.5f;
+        particle.ColorTint = Color.Green;
+        particle.Teleport(pos, null, null);
+        particle.DispatchSpawn();
+        particle.AcceptInput("Start", 0);
+
+        _helpers.EmitSoundFromPhyEntity(phyHandle, "BaseGrenade.Explode");
+
+    }
+
 }

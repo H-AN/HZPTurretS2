@@ -261,6 +261,7 @@ public class HanTurretS2Service
             _globals.TurretOwner[player.PlayerID] = set;
         }
         set.Add(turretHandle.Raw);
+        _globals.TurretToPlayer[turretHandle.Raw] = player.PlayerID;
 
         string BaseName = propName + "_Sentry";
         Sentryent!.Entity!.Name = BaseName;

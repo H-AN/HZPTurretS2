@@ -11,6 +11,7 @@ using SwiftlyS2.Shared.Natives;
 using SwiftlyS2.Shared.Players;
 using SwiftlyS2.Shared.SchemaDefinitions;
 using SwiftlyS2.Shared.Sounds;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace HZPTurretS2;
 
@@ -107,15 +108,15 @@ public class HanTurretEvents
         if (phyEntity == null || !phyEntity.IsValid) return;
 
 
-       // _logger.LogInformation($"1 命中部位: {vEntity.Name}, 实际指向主体: {phyEntity.Entity.Name}");
-
+        // _logger.LogInformation($"1 命中部位: {vEntity.Name}, 实际指向主体: {phyEntity.Entity.Name}");
+        
 
         if (_globals.TurretPartsMap.TryGetValue(finalPhyRaw, out var parts))
         {
-            
+
             bool attackerIsZombie = _zpAPI.HZP_IsZombie(AttackerPlayer.PlayerID);
             int amount = (int)@event.Info.Damage; 
-            if (!attackerIsZombie)
+            if (attackerIsZombie)
             {
                 if (_globals.TurretData.TryGetValue(finalPhyRaw, out var turretData) && turretData.Canbreakage)
                 {
@@ -127,8 +128,7 @@ public class HanTurretEvents
 
                     if (phyEntity.Health <= 0)
                     {
-                        _effect.CreateParticleAtPos(phyHandle, "particles/explosions_fx/explosion_basic.vpcf");
-                        _helpers.EmitSoundFromPhyEntity(phyHandle, "BaseGrenade.Explode");
+                        _aiservice.UnlinkTurret(phyHandle.Raw);
                         _aiservice.KillTurret(phyHandle);
                         
                     }
@@ -153,7 +153,7 @@ public class HanTurretEvents
                 }
                 
             }
-
+            ShowTurretInfo(AttackerPlayer, phyHandle);
             _effect.CreateParticleAtPos(phyHandle, "particles/explosions_fx/explosion_c4_interior_sparktrails.vpcf");
 
         }
@@ -191,7 +191,7 @@ public class HanTurretEvents
         @event.AddItem("models/stk_sentry_guns/sentry/base.vmdl");
         @event.AddItem("soundevents/game_sounds_physics.vsndevts");
         @event.AddItem("soundevents/game_sounds_weapons.vsndevts");
-        @event.AddItem("particles/explosions_fx/explosion_basic.vpcf");
+        @event.AddItem("particles/explosions_fx/explosion_c4_short.vpcf");
         @event.AddItem("particles/explosions_fx/explosion_c4_interior_sparktrails.vpcf");
 
         var maincfg = _mainconfig.CurrentValue;
@@ -232,6 +232,12 @@ public class HanTurretEvents
         _globals.sentryParticles.Clear();
         _globals.TurretData.Clear();
         _globals.PlayerTurretCounts.Clear();
+        _globals.TurretToPlayer.Clear();
+        _globals.TurretOwner.Clear();         
+        _globals.TurretPartsMap.Clear();       
+        _globals.TurretHeadToPhysics.Clear();  
+        _globals.TurretBaseToPhysics.Clear();  
+
     }
 
     private HookResult OnRoundStart(EventRoundStart @event)
@@ -240,6 +246,11 @@ public class HanTurretEvents
         _globals.sentryParticles.Clear();
         _globals.TurretData.Clear();
         _globals.PlayerTurretCounts.Clear();
+        _globals.TurretToPlayer.Clear();
+        _globals.TurretOwner.Clear();
+        _globals.TurretPartsMap.Clear();
+        _globals.TurretHeadToPhysics.Clear();
+        _globals.TurretBaseToPhysics.Clear();
 
         return HookResult.Continue;
     }
@@ -250,6 +261,11 @@ public class HanTurretEvents
         _globals.sentryParticles.Clear();
         _globals.TurretData.Clear();
         _globals.PlayerTurretCounts.Clear();
+        _globals.TurretToPlayer.Clear();
+        _globals.TurretOwner.Clear();
+        _globals.TurretPartsMap.Clear();
+        _globals.TurretHeadToPhysics.Clear();
+        _globals.TurretBaseToPhysics.Clear();
 
         return HookResult.Continue;
     }
@@ -267,12 +283,40 @@ public class HanTurretEvents
 
     public void ShowTurretInfo(IPlayer player, CHandle<CPhysicsPropOverride> sentryHandle) 
     {
+        if(!_mainconfig.CurrentValue.ShowTurretInfo)
+            return;
+
         if (!sentryHandle.IsValid)
             return;
 
         if (player == null || !player.IsValid || player.IsFakeClient || !player.IsAlive)
             return;
-        
+
+        var Sentry = sentryHandle.Value;
+        if (Sentry == null || !Sentry.IsValid || !Sentry.IsValidEntity)
+            return;
+
+        var SentryOwner = _globals.TurretToPlayer.TryGetValue(sentryHandle.Raw, out var ownerId);
+        var owner = _core.PlayerManager.GetPlayer(ownerId);
+        if (owner == null || !owner.IsValid || owner.IsFakeClient)
+            return;
+
+        _globals.TurretData.TryGetValue(sentryHandle.Raw, out var turretData);
+        if(turretData == null)
+            return;
+
+        bool canbreakage = turretData.Canbreakage;
+        bool canfix = turretData.CanFixes;
+
+        string breakagemessage = canbreakage ? "可以破坏" : "无法破坏";
+        string canfixmessage = canfix ? "可以修理" : "无法修理";
+        string message = $"<span><font color='red'> 玩家 {owner.Name} 的 {turretData.Name}</font></span><br>" +
+         $"<span><font color='orange'>剩余血量 </font><font color='red'>{Sentry.Health}</font></span><br>" +
+         $"<span><font color='orange'>最大血量 </font><font color='red'>{Sentry.MaxHealth}</font></span><br>" +
+         $"<span><font color='green'>{breakagemessage} </font></span><br>" +
+         $"<span><font color='green'>{canfixmessage} </font></span><br>";
+
+        player.SendCenterHTMLAsync(message);
 
     }
 }

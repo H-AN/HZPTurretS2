@@ -66,7 +66,7 @@ public class HanTurretAIService
                 if (_globals.TurretHeadToPhysics.TryGetValue(SentryHandle.Raw, out var phyRaw))
                 {
                     var phyHandle = new CHandle<CPhysicsPropOverride>(phyRaw);
-                    _effect.CreateParticleAtPos(phyHandle, "particles/explosions_fx/explosion_basic.vpcf");
+                    UnlinkTurret(phyHandle.Raw);
                     KillTurret(phyHandle);
                 }
             }
@@ -185,11 +185,13 @@ public class HanTurretAIService
             foreach (var phyRaw in set.ToList())
             {
                 var phyHandle = new CHandle<CPhysicsPropOverride>(phyRaw);
-                _effect.CreateParticleAtPos(phyHandle, "particles/explosions_fx/explosion_basic.vpcf");
+                UnlinkTurret(phyHandle.Raw);
                 KillTurret(phyHandle);
+                _globals.TurretToPlayer.Remove(phyRaw);
             }
 
             set.Clear();
+
             _globals.TurretOwner.Remove(playerID);
         }
 
@@ -200,6 +202,8 @@ public class HanTurretAIService
     {
         if (!phyHandle.IsValid)
             return;
+
+        _effect.CreateExplosionAtPos(phyHandle);
 
         uint phyRaw = phyHandle.Raw;
 
@@ -228,8 +232,23 @@ public class HanTurretAIService
         });
 
         _globals.TurretPartsMap.Remove(phyRaw);
-
     }
 
-    
+    public void UnlinkTurret(uint entityId)
+    {
+        if (_globals.TurretToPlayer.TryGetValue(entityId, out var owner))
+        {
+            if (_globals.TurretOwner.TryGetValue(owner, out var set))
+            {
+                set.Remove(entityId);
+
+                if (set.Count == 0)
+                    _globals.TurretOwner.Remove(owner);
+            }
+
+            _globals.TurretToPlayer.Remove(entityId);
+        }
+    }
+
+
 }
