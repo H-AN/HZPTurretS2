@@ -60,6 +60,9 @@ public class HanTurretEvents
 
     private void Event_OnEntityTakeDamage(SwiftlyS2.Shared.Events.IOnEntityTakeDamageEvent @event)
     {
+        if (@event.Info.DamageType != DamageTypes_t.DMG_SLASH)
+            return;
+
         var victim = @event.Entity;
         if (victim == null || !victim.IsValid)
             return;
